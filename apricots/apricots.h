@@ -691,4 +691,5 @@ void setup_intelligence(map &);
 void setup_map(map &, int, airbase *, bool *);
 void setup_planes(linkedlist<plane> &, linkedlist<planeclone> &, airbase *, int, info *, plane *&, plane *&);
 void switch_bad_default(const char *, const char *, int);
+void updateScreen(gamedata &);
 void winnerbox(gamedata &, int, int, int, int);
