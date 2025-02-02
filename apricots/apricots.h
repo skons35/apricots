@@ -679,6 +679,7 @@ void killtower(gamedata &, building &, double, double, int, int);
 void launch_drakfighter(drakmstype &, linkedlist<plane> &, linkedlist<planeclone> &);
 void load_font(SDL_Surface *, SDLfont &, SDLfont &);
 void load_shapes(gamedata &, shape *);
+void menu(gamedata &);
 void move_falls(gamedata &);
 void move_shots(linkedlist<shottype> &, shape &, shape &, shape &, drakmstype &);
 void plane_collisions(gamedata &);
