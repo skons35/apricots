@@ -4,22 +4,23 @@ apricots_SOURCES = \
 	SDLfont.h \
 	ai.cpp \
 	all.cpp \
+	SDLfont.cpp \
 	apricots.cpp \
+	apricots.h \
 	collide.cpp \
 	data.h \
-	fall.cpp \
-	game.cpp \
-	SDLfont.cpp \
-	apricots.h \
 	drak.cpp \
+	drawall.cpp \
+	fall.cpp \
 	finish.cpp \
+	game.cpp \
 	init.cpp \
+	linkedlist.h \
+	menu.cpp \
 	sampleio.cpp \
 	sampleio.h \
 	setup.cpp \
 	shape.cpp \
-	drawall.cpp \
-	linkedlist.h \
 	shape.h
 
 apricots_LDADD =

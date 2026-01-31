@@ -24,6 +24,9 @@ int main(int, char **) {
   // Setup game
   setup_game(g);
 
+  // menu
+  menu(g);
+
   // Enter main loop
   game(g);
 

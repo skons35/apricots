@@ -441,6 +441,7 @@ void game(gamedata &g) {
     // Then do everything else
     all(g);
     drawall(g);
+    updateScreen(g);
 
     // Delay for time remaining in TICK_INTERVAL
     SDL_Delay(time_left(next_time));

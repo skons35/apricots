@@ -290,7 +290,9 @@ void drawall(gamedata &g) {
     // Display score
     display_score(g.virtualscreen, bestp, 536, screenheight, g.mission, g.targetscore, g.whitefont, g.greenfont);
   }
+}
 
+void updateScreen(gamedata &g) {
   // Update screen display
   SDL_Rect rect;
   rect.x = 0;
