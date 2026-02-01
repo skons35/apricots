@@ -1,5 +1,10 @@
 #include <filesystem>
 
+/* VA added, for CMake based build, explicit value needed in code : */   
+#ifndef AP_PATH
+ #define AP_PATH "/usr/local/share/apricots/"
+#endif
+
 // font info
 struct fontinfo {
   std::filesystem::path path;

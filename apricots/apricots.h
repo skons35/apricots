@@ -31,6 +31,11 @@
 #include <filesystem>
 using namespace std;
 
+/* VA added, for CMake based build, explicit value needed in code : */  
+#ifndef SYSCONFIG_PATH 
+#define SYSCONFIG_PATH "/usr/local/etc"
+#endif
+
 // Global constants
 
 const int TILE_SIZE = 32;
