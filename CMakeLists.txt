@@ -3,7 +3,7 @@
 #
 cmake_minimum_required (VERSION 3.9) # allow use of FindOpenAL, ... <<  tested with CMAKE 3.28
 
-project ("apricots" VERSION 0.2.9)
+project ("apricots" VERSION 0.2.9 LANGUAGES CXX)
 
 # specify the C++ standard
 set(CMAKE_CXX_STANDARD 17)
@@ -11,23 +11,28 @@ set(CMAKE_CXX_STANDARD 17)
 # search for locally installed RmlUi lib :
 #set(RMLUI_STATIC true)
 
-
-find_package(OpenAL REQUIRED)
+# Not avail / usable on MorphOS : set it as optional for now (we'll replace its use)
+#find_package(OpenAL REQUIRED)
+find_package(OpenAL QUIET)
 message(STATUS "OpenAL FOUND :" ${OPENAL_FOUND}) 
-message(STATUS "OpenAL INCLUDE dir.:"  ${OPENAL_INCLUDE_DIR}) 
-message(STATUS "OpenAL libraries   :"  ${OPENAL_LIBRARY}) 
-include_directories(${OPENAL_INCLUDE_DIR})
+if(OPENAL_FOUND)
+	message(STATUS "OpenAL INCLUDE dir.:"  ${OPENAL_INCLUDE_DIR}) 
+	message(STATUS "OpenAL libraries   :"  ${OPENAL_LIBRARY}) 
+	include_directories(${OPENAL_INCLUDE_DIR})
+endif(OPENAL_FOUND)
 
-# Use our own package finder for libalure :
+# Use our own package finder for libalure and SDL2 (MorphOS):
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
-find_package(libalure REQUIRED)
-
+# Not avail / usable on MorphOS : set it as optional for now (we'll replace its use)
+#find_package(libalure REQUIRED)
+find_package(libalure QUIET)
 message(STATUS "lib alure FOUND :" ${LIB_ALURE_FOUND}) 
-message(STATUS "lib alure include dir.:"  ${LIB_ALURE_INCLUDE_DIR}) 
-message(STATUS "lib alure libraries   :"  ${ALURE_LIBRARIES}) 
-
-include_directories(${ALURE_INCLUDE_DIR})
+if(LIB_ALURE_FOUND)
+	message(STATUS "lib alure include dir.:"  ${LIB_ALURE_INCLUDE_DIR}) 
+	message(STATUS "lib alure libraries   :"  ${ALURE_LIBRARIES}) 
+	include_directories(${ALURE_INCLUDE_DIR})
+endif(LIB_ALURE_FOUND)
 
 # search for usual installed SDL2 libs :
 find_package(SDL2 REQUIRED)
@@ -77,17 +82,17 @@ ADD_LIBRARY(apricotsLib ${sources})
 # main prog :
 ADD_EXECUTABLE(apricots ${CMAKE_SOURCE_DIR}/apricots/apricots.cpp)
 
-target_link_libraries(apricots apricotsLib ${OPENAL_LIBRARY} ${LIB_ALURE_LIBRARIES} ${SDL2_LIBRARIES} ${SDL2_MIXER_LIBRARIES} ${SDL2_TTF_LIBRARIES} ${SDL2_IMAGE_LIBRARIES})
+#target_link_libraries(apricots apricotsLib ${OPENAL_LIBRARY} ${LIB_ALURE_LIBRARIES} ${SDL2_LIBRARIES} ${SDL2_MIXER_LIBRARIES} ${SDL2_TTF_LIBRARIES} ${SDL2_IMAGE_LIBRARIES})
 
 
-#if(NOT "${CMAKE_HOST_SYSTEM_NAME}" STREQUAL "MorphOS")
-#    target_link_libraries(apricots apricotsLib ${OPENAL_LIBRARY} ${ALURE_LIBRARIES} ${SDL2_LIBRARY} ${SDL2MIXER_LIBRARY} ${SDL2TTF_LIBRARY} ${SDL2IMAGE_LIBRARY})
-#else(NOT "${CMAKE_HOST_SYSTEM_NAME}" STREQUAL "MorphOS")
-#    message(STATUS "Morphos specific tweaking : libs c and m linking, and add link flag -noixemul")
-#	target_link_libraries(apricots apricotsLib ${OPENAL_LIBRARY} ${ALURE_LIBRARIES} ${SDL2_LIBRARY} ${SDL2MIXER_LIBRARY} ${SDL2TTF_LIBRARY} ${SDL2IMAGE_LIBRARY} GL c m)
-#	SET_TARGET_PROPERTIES(apricots PROPERTIES LINK_FLAGS -noixemul)
-#    # target_link_libraries(sceneTester sceneTestsLib m Gl glut)
-#endif(NOT "${CMAKE_HOST_SYSTEM_NAME}" STREQUAL "MorphOS")
+if(NOT "${CMAKE_HOST_SYSTEM_NAME}" STREQUAL "MorphOS")
+    target_link_libraries(apricots apricotsLib ${OPENAL_LIBRARY} ${ALURE_LIBRARIES} ${SDL2_LIBRARY} ${SDL2MIXER_LIBRARY} ${SDL2TTF_LIBRARY} ${SDL2IMAGE_LIBRARY})
+else(NOT "${CMAKE_HOST_SYSTEM_NAME}" STREQUAL "MorphOS")
+    message(STATUS "Morphos specific tweaking : libs c and m linking, and add link flag -noixemul")
+	target_link_libraries(apricots apricotsLib ${SDL2_LIBRARY} ${SDL2MIXER_LIBRARY} ${SDL2TTF_LIBRARY} ${SDL2IMAGE_LIBRARY} GL c m)
+	SET_TARGET_PROPERTIES(apricots PROPERTIES LINK_FLAGS -noixemul)
+    # target_link_libraries(sceneTester sceneTestsLib m Gl glut)
+endif(NOT "${CMAKE_HOST_SYSTEM_NAME}" STREQUAL "MorphOS")
 
 
 # install part related :
