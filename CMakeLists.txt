@@ -28,11 +28,17 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 #find_package(libalure REQUIRED)
 find_package(libalure QUIET)
 message(STATUS "lib alure FOUND :" ${LIB_ALURE_FOUND}) 
+
 if(LIB_ALURE_FOUND)
 	message(STATUS "lib alure include dir.:"  ${LIB_ALURE_INCLUDE_DIR}) 
 	message(STATUS "lib alure libraries   :"  ${ALURE_LIBRARIES}) 
 	include_directories(${ALURE_INCLUDE_DIR})
 endif(LIB_ALURE_FOUND)
+
+message(STATUS "lib alure include dir.:"  ${LIB_ALURE_INCLUDE_DIR}) 
+message(STATUS "lib alure libraries   :"  ${LIB_ALURE_LIBRARIES}) 
+
+include_directories(${ALURE_INCLUDE_DIR})
 
 # search for usual installed SDL2 libs :
 find_package(SDL2 REQUIRED)
@@ -101,8 +107,12 @@ SET_PROPERTY(TARGET apricots
   PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
   )
  
-INSTALL(TARGETS apricotsLib DESTINATION lib)
-INSTALL(TARGETS apricots DESTINATION bin)
+# INSTALL(TARGETS apricotsLib DESTINATION lib)
+# INSTALL(TARGETS apricots DESTINATION bin)
+INSTALL(TARGETS apricots DESTINATION ${CMAKE_BINARY_DIR}/bin)
+
+# copy the data folder under bin
+INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/apricots/data DESTINATION ${CMAKE_BINARY_DIR}/bin )
 
 # could also copy an EXISITNG 'run' folder into destination folder : ('run' must exist, or cmake error)
 #INSTALL(DIRECTORY run DESTINATION ${CMAKE_BINARY_DIR}/run)

@@ -2,7 +2,8 @@
 
 /* VA added, for CMake based build, explicit value needed in code : */   
 #ifndef AP_PATH
- #define AP_PATH "/usr/local/share/apricots/"
+// #define AP_PATH "/usr/local/share/apricots/"
+ #define AP_PATH "./data/"
 #endif
 
 // font info

@@ -33,11 +33,11 @@ FIND_PATH(LIB_ALURE_INCLUDE_DIR AL/alure.h  # find AL/alure.h and set it in ALLU
 FIND_LIBRARY(LIB_ALURE_LIBRARY alure
   HINTS
   #PATH_SUFFIXES lib lib64 libs/Win32 libs/Win64
-  PATH_SUFFIXES lib build  # VA fix
+  PATH_SUFFIXES x86_64-linux-gnu # build  # VA fix
   PATHS
   #$ENV{RMLUI} # Use environment variable RMLUI and see if $RMLUI/build contains  RmlCore lib
   #/usr/local
-  /usr
+  /usr/lib
 )
 
 
@@ -47,8 +47,9 @@ IF(LIB_ALURE_LIBRARY AND LIB_ALURE_INCLUDE_DIR)
   SET(LIB_ALURE_FOUND "YES")
   
 #default linking (optimized): 
- SET(LIB_ALURE_LIBRARIES "optimized" ${LIB_ALURE_LIBRARY})
-  message(STATUS "linking library : " ${LIB_ALURE_LIBRARIES})
+ #SET(LIB_ALURE_LIBRARIES "optimized" ${LIB_ALURE_LIBRARY})
+ SET(LIB_ALURE_LIBRARIES ${LIB_ALURE_LIBRARY})
+  # message(STATUS "linking library : " ${LIB_ALURE_LIBRARIES})
  
 ENDIF()
 
