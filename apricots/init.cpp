@@ -67,12 +67,22 @@ void load_font(SDL_Surface *screen, SDLfont &whitefont, SDLfont &greenfont) {
 
 void load_shapes(gamedata &g, shape images[]) {
 
+  // VA fix to get consistency use of app path / filenames
+  /*
   char filename[255];
   strcpy(filename, AP_PATH);
   strcat(filename, "apricots.shapes");
+  */
+  string _filename("apricots.shapes");
+  std::filesystem::path user_path(AP_PATH);
+  user_path /= _filename;
+  string filename = user_path.string();
+  // End of VA fix to get consistency use of app path / filenames
+
   ifstream fin(filename, ios::binary);
   if (fin.fail()) {
-    fprintf(stderr, "Could not open file: %s\n", filename);
+    //fprintf(stderr, "Could not open file: %s\n", filename);
+    fprintf(stderr, "Could not open file: %s\n", filename.c_str()); // VA
     exit(EXIT_FAILURE);
   }
 
@@ -128,12 +138,40 @@ void load_shapes(gamedata &g, shape images[]) {
 
 // Sound initialization
 
+// VA : original method : (using char array for filenames)
+/*
 void init_sound(gamedata &game) {
 
   char filenames[SOUNDS_COUNT][255];
   for (int i = 0; i < SOUNDS_COUNT; i++) {
     strcpy(filenames[i], AP_PATH);
     strcat(filenames[i], SOUND_NAMES[i]);
+  }
+
+  game.sound.init(game.volume, SOUNDS_COUNT, filenames, 2, 6);
+}
+*/
+// VA: reviewed code, using std::string for filenames (and concat with app data path)
+void init_sound(gamedata &game) {
+std::vector<std::string> soundFilenamesVec;
+//soundFilenamesVec.reserve(SOUNDS_COUNT);
+
+for (uint i=0; i<SOUNDS_COUNT; i++)
+{
+  std::filesystem::path sound_file_path(AP_PATH);    
+  sound_file_path /= SOUND_NAMES[i];
+  //fprintf(stdout,"init_sound() : prepared filename path : %s\n", sound_file_path .string().c_str());
+  soundFilenamesVec.push_back( sound_file_path.string());
+  // Enhance me : could now check existence of the file
+}
+
+  char filenames[SOUNDS_COUNT][255];
+  for (int i = 0; i < SOUNDS_COUNT; i++) {
+    //strcpy(filenames[i], AP_PATH);    
+    //strcat(filenames[i], SOUND_NAMES[i]);
+    strcpy(filenames[i], soundFilenamesVec[i].c_str());
+    // VA debug :
+    fprintf(stdout,"init_sound() : will load : %s\n", filenames[i]);
   }
 
   game.sound.init(game.volume, SOUNDS_COUNT, filenames, 2, 6);
@@ -256,6 +294,8 @@ int getConfig(string config, string name, int defval, int min, int max) {
 string find_config_file() {
   string filename("apricots.cfg");
 
+  // VA : rewritten part , on ly using APP_DATA variable, now a subfolder of binary folder
+  /* //original code
   std::filesystem::path user_path("/");
   const char *xdg_config_home = std::getenv("XDG_CONFIG_HOME");
   if (xdg_config_home == NULL) {
@@ -285,6 +325,15 @@ string find_config_file() {
   } else {
     return data_path;
   }
+  */ // end of original code
+ std::filesystem::path user_path(AP_PATH);
+ user_path /= filename;
+  if (!std::filesystem::exists(user_path)) {
+    fprintf(stderr,"find_config_file() : user_path does not exist : %s\n", user_path.string().c_str());
+    exit(EXIT_FAILURE); // fatal     
+  }
+  return user_path.string(); 
+ // End of VA : rewritten part 
 }
 
 void init_gamedata(gamedata &g) {
