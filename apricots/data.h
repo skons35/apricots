@@ -2,8 +2,10 @@
 
 /* VA added, for CMake based build, explicit value needed in code : */   
 #ifndef AP_PATH
-// #define AP_PATH "/usr/local/share/apricots/"
- #define AP_PATH "./data/"
+// #define AP_PATH "/usr/local/share/apricots/"  //  trailing "/" was doubled when concatenating files name, 
+// #define AP_PATH "./data/"                   //    later in code :-( 
+// #define AP_PATH "data/"                    //      so changed, and code reviewed for consistency
+#define AP_PATH "data" // << correct to use with std filesystem path plus filenames concatenatd using "/" operator
 #endif
 
 // font info

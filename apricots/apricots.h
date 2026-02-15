@@ -31,10 +31,13 @@
 #include <filesystem>
 using namespace std;
 
-/* VA added, for CMake based build, explicit value needed in code : */  
+// VA change : below def was added, for CMake based build, as explicit value needed in code
+// but now removed so commented
+/*
 #ifndef SYSCONFIG_PATH 
 #define SYSCONFIG_PATH "/usr/local/etc"
 #endif
+*/ // end of VA change 
 
 // Global constants
 
