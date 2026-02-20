@@ -171,7 +171,7 @@ for (uint i=0; i<SOUNDS_COUNT; i++)
     //strcat(filenames[i], SOUND_NAMES[i]);
     strcpy(filenames[i], soundFilenamesVec[i].c_str());
     // VA debug :
-    fprintf(stdout,"init_sound() : will load : %s\n", filenames[i]);
+    //fprintf(stdout,"init_sound() : will load : %s\n", filenames[i]);
   }
 
   game.sound.init(game.volume, SOUNDS_COUNT, filenames, 2, 6);
@@ -336,9 +336,61 @@ string find_config_file() {
  // End of VA : rewritten part 
 }
 
+// VA, for MorphOS
+std::string getConfigAsString(const std::string & configFilename)
+{
+  std::string config;
+  // use C code to read file  ( include stdio.h )
+  FILE *configFile = fopen(configFilename.c_str(),"rb"); // read in binary mode (no change to end of lines)
+  if (NULL == configFile)
+   {
+     fprintf(stderr,"getConfigAsString() Failed to open config file : %s\n", configFilename.c_str());
+     return config;
+   }
+	
+  // ok parse the file (ignore comment lines stating with #)
+  char lineBuffer[255];
+  
+  while ( NULL != fgets(lineBuffer, sizeof(lineBuffer), configFile) )
+  {
+	if ( '\n' == lineBuffer[0] || '#' == lineBuffer[0])
+	  continue; // skip empty line or comment ones
+	
+	char firstParamPartBuf[255];	
+	char secondParamPartBuf[255];	
+	if (2 != sscanf(lineBuffer,"%s %s", firstParamPartBuf, secondParamPartBuf))  // note : first param part ends with ":" (see config file)
+     {
+	   fprintf(stderr, "Skipping line in file:%s > fail to find < param: value > form from : %s \n", configFilename.c_str(), lineBuffer);
+	   continue;
+     }
+	    
+	std::string currConfLine = std::string(firstParamPartBuf) + std::string(secondParamPartBuf) + std::string("\n");
+	
+	// tempo debug :
+	//cout << "extracted : " << currConfLine.c_str(); // contains already EOL  ('\n') 
+	 
+	// accumulate to final config string (each conf separated by eol)
+	config.append(currConfLine); 	
+  }
+
+  fclose(configFile);
+	
+  return config;
+}
+
 void init_gamedata(gamedata &g) {
 
   string filename = find_config_file();
+  
+  //VA TEMPO DEBUG : 
+  //fprintf(stdout,"init_gamedata() : find_config_file() says config file is : %s\n", filename.c_str());
+  // VA TEMPO HACK to avoid hanging ifstream part (to be rewritten) >> SO LOAD DEFAULTS VALUES FOR NOW
+  string config = getConfigAsString(filename); // tempo to allow below code comment
+	
+  //VA tempo debug :
+  //cout << "extracted : " << endl << config.c_str(); // should contains multiple '\n' after config params extraction
+	
+  /* // original code
   ifstream config_stream(filename);
   //--JAM: Read from config file
   string config;
@@ -357,6 +409,8 @@ void init_gamedata(gamedata &g) {
     config = "\n";
   }
   config_stream.close();
+  // END of original code
+  */ // END OF VA TEMPO HACK to avoid hanging ifstream part (to be rewritten) >> SO LOAD DEFAULTS VALUES FOR NOW
 
   // Number of planes (1-6)
   g.planes = getConfig(config, "NUM_PLANES", 2, 1, 6);

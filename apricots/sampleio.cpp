@@ -19,6 +19,7 @@ sampleio ::sampleio() { initdone = false; }
 
 // Initialize OpenAL
 void sampleio ::init(float the_volume, int nsamples, char filenames[][255], int nsources, int npool) {
+/* //VA tempo remove audio using OpenAL or alure
   if (initdone) {
     cerr << "sampleio: call to init when already in use" << endl;
     exit(EXIT_FAILURE);
@@ -76,18 +77,20 @@ void sampleio ::init(float the_volume, int nsamples, char filenames[][255], int 
   }
 
   // free(data);
+*/ //VA tempo remove audio using OpenAL or alure
 }
 
 // Clearup routine
 
 void sampleio ::close() {
-
+/* //VA tempo remove audio using OpenAL or alure
   if (initdone) {
     delete[] samples;
     delete[] sources;
     initdone = false;
     alureShutdownDevice();
   }
+*/ //VA tempo remove audio using OpenAL or alure
 }
 
 // Update method (blank)
@@ -97,6 +100,7 @@ void sampleio ::update() {}
 // Play a channel
 
 void sampleio ::channel(int chan, int sample) {
+/* //VA tempo remove audio using OpenAL or alure
   if (!initdone) {
     cerr << "sampleio: initialize before use" << endl;
     return;
@@ -111,11 +115,13 @@ void sampleio ::channel(int chan, int sample) {
   }
 
   psource(chan, sample, false);
+*/ //VA tempo remove audio using OpenAL or alure
 }
 
 // Loop a sample
 
 void sampleio ::loop(int chan, int sample) {
+/* //VA tempo remove audio using OpenAL or alure
 
   if (!initdone) {
     cerr << "sampleio: initialize before use" << endl;
@@ -130,11 +136,13 @@ void sampleio ::loop(int chan, int sample) {
     return;
   }
   psource(chan, sample, true);
+*/ //VA tempo remove audio using OpenAL or alure
 }
 
 // Play a sample
 
 void sampleio ::play(int sample) {
+/* //VA tempo remove audio using OpenAL or alure
 
   if (!initdone) {
     cerr << "sampleio: initialize before use" << endl;
@@ -152,12 +160,14 @@ void sampleio ::play(int sample) {
   if (poolcount == numsources + numpool)
     poolcount = numsources;
   psource(poolcount, sample, false);
+*/ //VA tempo remove audio using OpenAL or alure
 }
 
 // Stop current sample
 
 void sampleio ::stop(int i) {
 
+/* //VA tempo remove audio using OpenAL or alure
   if (!initdone) {
     cerr << "sampleio: initialize before use" << endl;
     return;
@@ -169,12 +179,14 @@ void sampleio ::stop(int i) {
   if (sourceisplaying(sources[i])) {
     alSourceStop(sources[i]);
   }
+*/ //VA tempo remove audio using OpenAL or alure
 }
 
 // Actaully start a sample
 
 void sampleio ::psource(int i, int sample, bool loop) {
-
+/* //VA tempo remove audio using OpenAL or alure
+	
   // Stop current sample
   if (sourceisplaying(sources[i])) {
     alSourceStop(sources[i]);
@@ -190,11 +202,13 @@ void sampleio ::psource(int i, int sample, bool loop) {
 
   // Play new sample
   alSourcePlay(sources[i]);
+*/ //VA tempo remove audio using OpenAL or alure
 }
 
 // Volume control function
 
 void sampleio ::volume(int i, double vol) {
+/* //VA tempo remove audio using OpenAL or alure
 
   if (!initdone) {
     cerr << "sampleio: initialize before use" << endl;
@@ -205,11 +219,13 @@ void sampleio ::volume(int i, double vol) {
     return;
   }
   alSourcef(sources[i], AL_GAIN, ALfloat(vol * base_volume));
+*/ //VA tempo remove audio using OpenAL or alure
 }
 
 // Check on playing sources function
 
 ALboolean sampleio ::sourceisplaying(ALuint sid) {
+/* //VA tempo remove audio using OpenAL or alure
 
   ALint state;
   if (alIsSource(sid) == AL_FALSE) {
@@ -231,5 +247,6 @@ ALboolean sampleio ::sourceisplaying(ALuint sid) {
   default:
     break;
   }
+  */ //VA tempo remove audio using OpenAL or alure
   return AL_FALSE;
 }

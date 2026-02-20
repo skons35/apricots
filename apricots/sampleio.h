@@ -6,6 +6,8 @@
 // Changes by M Snellgrove 25/7/2003
 //   Conditional Compilation for OpenAL
 
+// VA remove/replace OpenAL and alure libs refs
+/*
 // OpenAL includes
 #include <AL/al.h>
 #include <AL/alc.h>
@@ -14,6 +16,12 @@
 #else
 #include <AL/alure.h>
 #endif
+*/
+#define ALuint unsigned int
+#define ALboolean char
+#define AL_FALSE 0
+#define AL_TRUE 1
+// End of VA remove/replace OpenAL and alure libs refs
 
 #include <cstdio>
 #include <cstdlib>
