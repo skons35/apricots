@@ -27,9 +27,11 @@
 void setup_display(gamedata &g) {
   SDL_Window *window =
       SDL_CreateWindow("Apricots", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT,
-                       SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_MAXIMIZED | SDL_WINDOW_RESIZABLE);
+//                       SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_MAXIMIZED | SDL_WINDOW_RESIZABLE);  //
+                      /* SDL_WINDOW_FULLSCREEN_DESKTOP | */ SDL_WINDOW_RESIZABLE);   // VA try some settings (here full screen if set SDL_WINDOW_FULLSCREEN_DESKTOP )
 
-  g.renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
+  //g.renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE); //
+  g.renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);  // << VA set recommended settings for MorphOS
   if (g.renderer == NULL) {
     fprintf(stderr, "Couldn't create renderer: %s\n", SDL_GetError());
     exit(EXIT_FAILURE);

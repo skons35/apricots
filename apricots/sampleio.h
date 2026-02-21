@@ -23,6 +23,10 @@
 #define AL_TRUE 1
 // End of VA remove/replace OpenAL and alure libs refs
 
+  // 
+#include<SDL_mixer.h>   // VA added, includes #include<SDL_audio.h>  
+#include<vector>       // 
+
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
@@ -42,6 +46,8 @@ private:
   void psource(int source, int sample, bool loop);
   ALboolean sourceisplaying(ALuint);
   float base_volume;
+  // VA Added:
+  std::vector<Mix_Music *> soundsVec;
 
 public:
   sampleio();

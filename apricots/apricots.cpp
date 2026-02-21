@@ -34,8 +34,9 @@ int main(int, char **) {
   finish_game(g);
 
   // Shutdown
-  SDL_Quit();
-  g.sound.close();
+  g.sound.close(); // << VA : close SDL mixer usage BEFORE  SDL_Quit
+  SDL_Quit();  
+  //g.sound.close(); // << VA : was ok for OpenAL close after SDL
 
   return 0;
 }

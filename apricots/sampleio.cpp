@@ -19,6 +19,56 @@ sampleio ::sampleio() { initdone = false; }
 
 // Initialize OpenAL
 void sampleio ::init(float the_volume, int nsamples, char filenames[][255], int nsources, int npool) {
+
+  // get list of audio DRIVERS, 
+  // given in order normally intialized by default (starting by best to choose)
+  /*
+  int numAudioDrivers = SDL_GetNumAudioDrivers(); 
+  std::cout << "Found audio drivers: " << numAudioDrivers << std::endl;
+  if ( 0 == numAudioDrivers )
+   {
+    std::cerr << "NO audio drivers to init !" << std::endl;
+    return;
+   }
+  // VA tempo display list drivers :
+  for (int i = 0; i<numAudioDrivers; i++) 
+  {
+    std::cout << " - " <<  SDL_GetAudioDriver(i) << std::endl;
+  }
+  */
+  // SDL init DRIVER was already called earlier, simply try to display currently loaded one
+  //std::cout << "Curent Audio driver in use : " << SDL_GetCurrentAudioDriver() << std::endl;
+
+  // Now list audio DEVICE(s) to use with this DRIVER
+  /*
+  int numAudioDevices = SDL_GetNumAudioDevices(0); // 0 for playback devices only
+  std::cout << "Playback Audio device(s) found : " << numAudioDevices << std::endl;
+  */
+  
+  // init SDL Mixer () freq used in our sound file, other settings as default)
+  if (Mix_OpenAudio(16726, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) < 0)
+  {
+    std::cerr << "init() Fails to init SDL Mixer with current settings..." << std::endl;
+    return;
+  }
+  // tempo debug
+  //std::cout << "init() initialized SDL Mixer." << std::endl;
+
+  numsamples = nsamples;
+
+  // load wav as Music ready to play in a vector
+  for (int i = 0; i < numsamples; i++) 
+  {
+    Mix_Music* loadedSound = Mix_LoadMUS(filenames[i]);
+    soundsVec.push_back( loadedSound );
+  }
+
+  // VA tempo debug :
+  //std::cout << "vector size of preload Wav : " << soundsVec.size() << std::endl;
+
+  initdone = true;
+ 
+
 /* //VA tempo remove audio using OpenAL or alure
   if (initdone) {
     cerr << "sampleio: call to init when already in use" << endl;
@@ -83,6 +133,26 @@ void sampleio ::init(float the_volume, int nsamples, char filenames[][255], int 
 // Clearup routine
 
 void sampleio ::close() {
+
+  if (initdone) 
+  {
+    Mix_CloseAudio(); // includes  call to Mix_HaltMusic() stopping current play if any
+    // tempo debug
+    //std::cout << "close() UNinitialized SDL Mixer." << std::endl;
+    
+    // clear allocated data    
+    while (!soundsVec.empty())
+    {  
+      Mix_Music* backSound = soundsVec.back();
+      Mix_FreeMusic(backSound);
+      backSound = NULL;
+      soundsVec.pop_back();
+    }
+    // VA tempo debug :
+    //std::cout << "vector size of preload Wav after cleanup : " << soundsVec.size() << std::endl;
+  }
+
+
 /* //VA tempo remove audio using OpenAL or alure
   if (initdone) {
     delete[] samples;
@@ -142,6 +212,16 @@ void sampleio ::loop(int chan, int sample) {
 // Play a sample
 
 void sampleio ::play(int sample) {
+
+  if (!initdone) {
+    cerr << "play() audio not ready for use !" << endl;
+    return;
+  }
+
+  Mix_PlayMusic(soundsVec[sample], 0); // 0 for play once and stop
+
+
+
 /* //VA tempo remove audio using OpenAL or alure
 
   if (!initdone) {
