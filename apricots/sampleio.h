@@ -47,7 +47,8 @@ private:
   ALboolean sourceisplaying(ALuint);
   float base_volume;
   // VA Added:
-  std::vector<Mix_Music *> soundsVec;
+  //std::vector<Mix_Music *> soundsVec;
+  std::vector<Mix_Chunk *> soundsVec;
 
 public:
   sampleio();

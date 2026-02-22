@@ -54,14 +54,27 @@ void sampleio ::init(float the_volume, int nsamples, char filenames[][255], int 
   // tempo debug
   //std::cout << "init() initialized SDL Mixer." << std::endl;
 
+  base_volume = the_volume;
   numsamples = nsamples;
-
+ 
   // load wav as Music ready to play in a vector
   for (int i = 0; i < numsamples; i++) 
   {
-    Mix_Music* loadedSound = Mix_LoadMUS(filenames[i]);
+    //Mix_Music* loadedSound = Mix_LoadMUS(filenames[i]);
+    Mix_Chunk* loadedSound = Mix_LoadWAV(filenames[i]);
     soundsVec.push_back( loadedSound );
   }
+
+  // keep last audio channel for engine related sounds, 
+  //  so reserve for the application all channels except that last one
+  Mix_ReserveChannels(MIX_CHANNELS-2);
+
+  // assign globally the base volume (a perc value, between 0.0 and 1.0)
+  // Mix_MasterVolume(base_volume* MIX_MAX_VOLUME);  // << no effect ?
+  for (uint i=0; i<MIX_CHANNELS; i++)
+  {
+    Mix_Volume(i, base_volume* MIX_MAX_VOLUME);
+  }  
 
   // VA tempo debug :
   //std::cout << "vector size of preload Wav : " << soundsVec.size() << std::endl;
@@ -143,8 +156,10 @@ void sampleio ::close() {
     // clear allocated data    
     while (!soundsVec.empty())
     {  
-      Mix_Music* backSound = soundsVec.back();
-      Mix_FreeMusic(backSound);
+      //Mix_Music* backSound = soundsVec.back();
+      //Mix_FreeMusic(backSound);
+      Mix_Chunk* backSound = soundsVec.back();
+      Mix_FreeChunk(backSound);
       backSound = NULL;
       soundsVec.pop_back();
     }
@@ -191,6 +206,21 @@ void sampleio ::channel(int chan, int sample) {
 // Loop a sample
 
 void sampleio ::loop(int chan, int sample) {
+
+if (!initdone) {
+    cerr << "loop() audio not ready for use !" << endl;
+    return;
+  }
+
+// VA note : loop() seems related to sounds fo engine ... >> we'll use the last channel dedicated for these sounds, 
+//Mix_Volume (MIX_CHANNELS-1, base_volume * MIX_MAX_VOLUME * 0.5); // and half volume for these sounds << no effect ?
+
+Mix_VolumeChunk(soundsVec[sample], base_volume * MIX_MAX_VOLUME * 0.5); // and half volume for these sounds
+
+//Mix_PlayMusic(soundsVec[sample], 0); // 0 for play once and stop
+Mix_PlayChannel(MIX_CHANNELS-1, soundsVec[sample], -1); // channel (-1 for first avail channel), then number of loop (-1 to loop indefinitely)
+
+
 /* //VA tempo remove audio using OpenAL or alure
 
   if (!initdone) {
@@ -218,7 +248,10 @@ void sampleio ::play(int sample) {
     return;
   }
 
-  Mix_PlayMusic(soundsVec[sample], 0); // 0 for play once and stop
+  Mix_VolumeChunk(soundsVec[sample], base_volume * MIX_MAX_VOLUME);
+
+  //Mix_PlayMusic(soundsVec[sample], 0); // 0 for play once and stop
+  Mix_PlayChannel(-1, soundsVec[sample], 0); // -1 for first avail channel, 0 for play once and stop
 
 
 
@@ -246,6 +279,13 @@ void sampleio ::play(int sample) {
 // Stop current sample
 
 void sampleio ::stop(int i) {
+
+ if (!initdone) {
+    cerr << "stop() audio not ready for use !" << endl;
+    return;
+  }
+// to do : stop the sample (using SDL)
+Mix_HaltChannel(MIX_CHANNELS-1); // stop the channel we use to play engine related sounds (until next use)
 
 /* //VA tempo remove audio using OpenAL or alure
   if (!initdone) {
@@ -288,6 +328,19 @@ void sampleio ::psource(int i, int sample, bool loop) {
 // Volume control function
 
 void sampleio ::volume(int i, double vol) {
+// VA Note : seems used only for Engine volume control
+if (!initdone) {
+    cerr << "volume() audio not ready for use !" << endl;
+    return;
+  }
+
+//int newVol = int(vol * MIX_MAX_VOLUME);
+//int prevVol = Mix_VolumeChunk(soundsVec[i], newVol ); // MIX_MAX_VOLUME is 128 (max value, above is clamped)
+Mix_VolumeChunk(soundsVec[i], int(vol * MIX_MAX_VOLUME) );
+
+// VA tempo debug log 
+//cout << "Change for sound #" << i << " vol, from : "<< prevVol << " , to : "<< newVol<< std::endl;
+
 /* //VA tempo remove audio using OpenAL or alure
 
   if (!initdone) {
